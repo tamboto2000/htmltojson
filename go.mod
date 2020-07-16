@@ -1,4 +1,4 @@
-module htmltojson
+module github.com/tamboto2000/htmltojson
 
 go 1.14
 
