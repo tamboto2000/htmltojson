@@ -1,4 +1,7 @@
 # HTMLtoJSON
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/tamboto2000/htmltojson.svg)](https://pkg.go.dev/github.com/tamboto2000/htmltojson)
+
 HTMLtoJSON is a HTML parser, based on net/html package. This package actually just to simplify HTML parsing. If you need more complex HTML processing, please use net/html as its offer more features. The package name is actually is not really fitting for this package purpose, but I use this package for may scraper engines, so I don't really want to bother with changing the package name...
 
 ### Installation
