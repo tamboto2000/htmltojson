@@ -1,13 +1,19 @@
+// Package htmltojson is a HTML parser, based on net/html package. This package actually just to simplify HTML parsing.
+// If you need more complex HTML processing, please use net/html as its offer more features.
+// The package name is actually is not really fitting for this package purpose, but I use this package for may scraper engines, so
+// I don't really want to bother with changing the package name...
 package htmltojson
 
 import (
 	"bytes"
 	"io"
+	"os"
 	"strings"
 
 	"golang.org/x/net/html"
 )
 
+// Node is parsed HTML object
 type Node struct {
 	Type      string `json:"type"`
 	Data      string `json:"data"`
@@ -16,13 +22,14 @@ type Node struct {
 	Child     []Node `json:"child"`
 }
 
+// Attr is HTML attributes, like class, style, id, etc.
 type Attr struct {
 	Namespace string `json:"namespace"`
 	Key       string `json:"key"`
 	Val       string `json:"val"`
 }
 
-//node types
+// Node Types
 const (
 	Text     = "text"
 	Document = "document"
@@ -31,12 +38,12 @@ const (
 	Doctype  = "doctype"
 )
 
-//Parse parse HTML node to marshalable node
+// Parse parse HTML node to marshalable node
 func Parse(root *html.Node) *Node {
 	return parseToJSON(root)
 }
 
-//ParseString parse HTML string to marshalable node
+// ParseString parse HTML string to marshalable node
 func ParseString(str string) (*Node, error) {
 	doc, err := html.Parse(strings.NewReader(str))
 	if err != nil {
@@ -46,7 +53,7 @@ func ParseString(str string) (*Node, error) {
 	return parseToJSON(doc), nil
 }
 
-//ParseBytes parse HTML bytes to marshalable node
+// ParseBytes parse HTML bytes to marshalable node
 func ParseBytes(byts []byte) (*Node, error) {
 	doc, err := html.Parse(bytes.NewBuffer(byts))
 	if err != nil {
@@ -56,7 +63,7 @@ func ParseBytes(byts []byte) (*Node, error) {
 	return parseToJSON(doc), nil
 }
 
-//ParseFromReader parse reader to marshalable node
+// ParseFromReader parse reader to marshalable node
 func ParseFromReader(reader io.Reader) (*Node, error) {
 	doc, err := html.Parse(reader)
 	if err != nil {
@@ -66,12 +73,32 @@ func ParseFromReader(reader io.Reader) (*Node, error) {
 	return parseToJSON(doc), nil
 }
 
-//SearchNode search a node matched with options
+// ParseFromFile parse HTML from file in path
+func ParseFromFile(path string) (*Node, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	defer f.Close()
+
+	return ParseFromReader(f)
+}
+
+// SearchNode search a node matched with params.
+// ty for HTML object type,
+// data is for HTML tag name,
+// key is for attribute key
+// val is for attribute value with key
 func SearchNode(ty, data, namespace, key, val string, node *Node) *Node {
 	return searchNode(ty, data, namespace, key, val, node)
 }
 
-//SearchAllNode search nodes matched with options
+// SearchAllNode search nodes matched with options.
+// ty for HTML object type,
+// data is for HTML tag name,
+// key is for attribute key
+// val is for attribute value with key
 func SearchAllNode(ty, data, namespace, key, val string, node *Node) []Node {
 	return searchAllNode(ty, data, namespace, key, val, node)
 }
